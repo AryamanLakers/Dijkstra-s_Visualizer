@@ -12,12 +12,14 @@ export default function App() {
   const [grid, setGrid] = useState([[]]);
   const [checkstart, setstart] = useState(false);
   const [checkgoal, setgoal] = useState(false);
-
+  
+  //whenever the page loads for the first time, grid is created
   useEffect(() => {
     const grid = makeGrid();
     setGrid(grid);
   }, []);
-
+  
+  //we are creating a node with it's state
   const createNode = (row, col) => {
     return {
       col,
@@ -38,7 +40,7 @@ export default function App() {
       isendnode: false
     };
   };
-
+  
   function makeGrid() {
     let grid = [];
     for (var i = 0; i < n; i++) {
@@ -58,13 +60,18 @@ export default function App() {
     if (e.buttons !== 1) return;
     const node = grid[row1][col1];
     if (node.isstartnode || node.isendnode) return;
+    
+    //when we click the start button our checkstart gets true and hence we can select our string node
     if (checkstart) {
       const tag = document.querySelector(`.kk${start.row}-${start.col}`);
       tag.style.backgroundColor = gridColor;
       setStart({ row: row1, col: col1 });
       e.target.style.backgroundColor = "green";
       setstart(!checkstart);
-    } else if (checkgoal) {
+    } 
+    
+    //here we are selecting goal state
+    else if (checkgoal) {
       let tag;
       if (document.readyState !== "loading") {
         tag = document.querySelector(`.kk${target.row}-${target.col}`);
@@ -74,7 +81,9 @@ export default function App() {
         e.target.style.backgroundColor = "red";
         setgoal(!checkgoal);
       }
-    } else {
+    } 
+    //this is to create blockages whenever we click and drag
+     else {
       if (node.isWall) {
         e.target.style.backgroundColor = gridColor;
       } else {
@@ -88,7 +97,8 @@ export default function App() {
       setGrid(grid);
     }
   };
-
+  
+  //getting neighbours of a particular node
   const getneighbours = (node) => {
     const neighbors = [];
     const { col, row } = node;
@@ -98,24 +108,25 @@ export default function App() {
     if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
     return neighbors.filter((neighbor) => !neighbor.isVisited);
   };
-
+  
+  //this is the main dijkstra's algorithm 
   const djikstra = () => {
-    const queue = [];
-    let visited = [];
+    const queue = [];//this is the priority queue
+    let visited = [];//we add all the nodes that we visited
     const node = grid[start.row][start.col];
     const target_node = grid[target.row][target.col];
     queue.push(node);
     node.distance = 0;
     while (!!queue.length) {
-      sortNodesByDistance(queue);
+      sortNodesByDistance(queue);//sorting the queue gives the closes node from current node
       const curr = queue.shift();
       if (curr.isVisited) continue;
       if (curr.isWall) continue;
       if (curr.distance === Infinity) break;
       curr.isVisited = true;
-      visited.push(curr);
+      visited.push(curr);//we keep on adding the nodes that we visited into visited array
       if (curr === target_node) break;
-      const unvisited_nodes = getneighbours(curr);
+      const unvisited_nodes = getneighbours(curr);//getting all the neighbours of the queue.front node
 
       unvisited_nodes.forEach((item) => {
         item.distance = Math.min(curr.distance + 1, item.distance);
@@ -125,11 +136,13 @@ export default function App() {
     }
     visited = visited.filter((nodes, index) => {
       return visited.indexOf(nodes) === index;
-    });
+    });//removing the duplicate nodes
+    
     const shortestPath = getShortestPath(visited);
     animateDjikstra(visited, shortestPath);
   };
 
+  //
   async function animateDistance(shortestPath) {
     for (let i = 0; i < shortestPath.length; i++) {
       await new Promise((resolve) => {
@@ -146,15 +159,18 @@ export default function App() {
       });
     }
   }
-
+  
   async function animateDjikstra(visited, shortestPath) {
     for (let i = 1; i <= visited.length; i++) {
       let current;
       if (i < visited.length) current = visited[i];
       if (i === visited.length) {
+        //when we reach the goal state, we call this func to draw shortest path
         await animateDistance(shortestPath);
         return;
       } else {
+        //for every node we add this class for animation
+        //we added async functionality to create a delay
         await new Promise((resolve) => {
           setTimeout(() => {
             let tag = document.querySelector(
@@ -171,7 +187,8 @@ export default function App() {
   function sortNodesByDistance(unvisitedNodes) {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
   }
-
+  
+  //we create the route of shortest path
   function getShortestPath(visited) {
     const nodesWithShortestPath = [];
     let curr = grid[target.row][target.col];
