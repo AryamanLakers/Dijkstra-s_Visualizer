@@ -109,10 +109,11 @@ export default function App() {
     return neighbors.filter((neighbor) => !neighbor.isVisited);
   };
   
-  //this is the main dijkstra's algorithm 
+  //this is the main dijkstra's algorithm
+  //first we create a visited array which shows all the nodes the algorithm, this will help to paint the grid as it will emulate the algorithm
   const djikstra = () => {
     const queue = [];//this is the priority queue
-    let visited = [];//we add all the nodes that we visited
+    let visited = [];//we add all the nodes that we visited, we add all those node that algo visited
     const node = grid[start.row][start.col];
     const target_node = grid[target.row][target.col];
     queue.push(node);
@@ -138,7 +139,7 @@ export default function App() {
       return visited.indexOf(nodes) === index;
     });//removing the duplicate nodes
     
-    const shortestPath = getShortestPath(visited);
+    const shortestPath = getShortestPath(visited);//we backtrack the last node and get a path
     animateDjikstra(visited, shortestPath);
   };
 
