@@ -12,4 +12,4 @@ I have implemented Dijkstra's algorithm which for what I understand is a greedy 
 - After then click the goal button and choose the goal node
 - Click on the run button to run the algorithm
 
-Website:https://7hmlv8.csb.app/
+Website:https://csb-xsuoom.netlify.app/
