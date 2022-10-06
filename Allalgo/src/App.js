@@ -24,7 +24,8 @@ export default function App() {
   const [grid, setGrid] = useState([[]]);
   const [checkstart, setstart] = useState(false);
   const [checkgoal, setgoal] = useState(false);
-
+  
+  //whenever the dom loads we call this function  to set grid
   useEffect(() => {
     const grid = makeGrid(n, m, start, target);
     setGrid(grid);
@@ -98,6 +99,7 @@ export default function App() {
   return (
     <div className="grid">
       <div className="csswork">
+        //this div is to show the options of our algos, when i click the option div, we get list of Algocard components whicch shows our current algos
         <div
           className="options"
           onClick={() => {
@@ -119,6 +121,9 @@ export default function App() {
             <div className="algotag">{startAlgo}</div>
           )}
         </div>
+        //end of options list
+        
+        //start button
         <button
           onClick={() => {
             setstart(!checkstart);
@@ -126,6 +131,8 @@ export default function App() {
         >
           Start
         </button>
+
+        //goal set button
         <button
           onClick={() => {
             setgoal(!checkgoal);
@@ -133,10 +140,11 @@ export default function App() {
         >
           Goal
         </button>
+
+        //button to run the algo of our choice
         <button
           onClick={() => {
-            if (startAlgo === "Dijkstra")
-              dijkstra(grid, start, target, startAlgo);
+            if (startAlgo === "Dijkstra") dijkstra(grid, start, target, startAlgo);
             else if (startAlgo === "Bfs") bfs(grid, start, target);
             else if (startAlgo === "Dfs") dfs(grid, start, target);
             else if (startAlgo === "A*") astar(grid, start, target);
@@ -146,13 +154,17 @@ export default function App() {
         >
           Run
         </button>
+
       </div>
       <div className="innerGrid">
         {grid.map((row, rowid) => {
           return (
+            //number of row is 20 so here we refering to that row
             <div key={rowid} className="eachrow">
               {row.map((node, nodeid) => {
+                //here we are traversing to all 70 col 
                 return (
+                  //this represent each single Node
                   <Node
                     key={nodeid}
                     col={node}
